@@ -3,46 +3,59 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>플랜두씨 다이어리</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#eee8dc;color:#3d372f;font-family:"Malgun Gothic","Apple SD Gothic Neo",sans-serif}
 .app{width:100%;min-height:100vh;padding:20px;display:flex;justify-content:center;align-items:center}
-.diary{width:min(1450px,97vw);aspect-ratio:16/9;background:#fffdf7;border:1px solid #d8cfbf;border-radius:18px;box-shadow:0 15px 40px rgba(60,50,40,.12);overflow:hidden;display:flex;flex-direction:column}
-.header{height:90px;padding:18px 30px;border-bottom:1px solid #ded6c9;display:flex;justify-content:space-between;align-items:center;background:#faf6ed}
-.title-area h1{margin:0 0 5px;font-size:28px}.title-area p{margin:0;color:#8b8174;font-size:13px}
-.date-area{display:flex;align-items:center;gap:8px}.date-area input{padding:9px 11px;border:1px solid #d4cabb;border-radius:8px;background:#fff;color:#4a433a}
-.content{flex:1;display:grid;grid-template-columns:1fr 1fr 1.35fr;min-height:0}
-.section{padding:20px;border-right:1px solid #e0d8cb;display:flex;flex-direction:column;min-width:0}
+.diary{width:min(1450px,97vw);aspect-ratio:16/9;background:#fffdf7;border:1px solid #d8cfbf;border-radius:18px;box-shadow:0 15px 40px #3c32201f;overflow:hidden;display:flex;flex-direction:column}
+.header{height:88px;padding:16px 28px;border-bottom:1px solid #ded6c9;display:flex;justify-content:space-between;align-items:center;background:#faf6ed}
+.title-area h1{margin:0 0 4px;font-size:27px}.title-area p{margin:0;color:#8b8174;font-size:12px}
+.date-area{display:flex;align-items:center;gap:8px}.date-area input{padding:8px 10px;border:1px solid #d4cabb;border-radius:7px;background:#fff}
+.content{flex:1;display:grid;grid-template-columns:1fr 1.3fr 1.2fr;min-height:0}
+.section{padding:17px;border-right:1px solid #e0d8cb;display:flex;flex-direction:column;min-width:0;overflow:hidden}
 .section:last-child{border:0}.plan{background:#fffdf8}.do{background:#fbfaf5}.see{background:#f8f5ee}
-.section-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}.number{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;background:#e7dcc8}
-.section h2{margin:0;font-size:20px}.section-sub{margin:2px 0 0;font-size:11px;color:#978c7d}
-textarea{width:100%;flex:1;min-height:120px;resize:none;border:1px solid #ddd4c6;border-radius:10px;background:rgba(255,255,255,.75);padding:14px;font-size:14px;line-height:1.6;color:#403a33;outline:none}
-textarea:focus{border-color:#a99982}.tip{margin-top:8px;font-size:11px;color:#9b9185}
+.section-head{display:flex;align-items:center;gap:9px;margin-bottom:9px}.number{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;background:#e7dcc8;font-size:13px}
+.section h2{margin:0;font-size:19px}.section-sub{margin:1px 0 0;font-size:10px;color:#978c7d}
+textarea{width:100%;resize:none;border:1px solid #ddd4c6;border-radius:9px;background:#ffffffbf;padding:11px;font-size:12px;line-height:1.55;color:#403a33;outline:none}
+.maintext{flex:1;min-height:100px}.tip{margin-top:6px;font-size:10px;color:#9b9185}
+button{border:0;border-radius:6px;padding:7px 9px;cursor:pointer;font-size:10px;font-weight:bold}
+button:hover{opacity:.85}
 
 /* 할 일 */
-.task-top{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:6px;margin-bottom:6px}
-.task-top input,.task-top select,.filter input,.filter select{width:100%;padding:8px;border:1px solid #d9d0c2;border-radius:7px;background:#fff;color:#51493f;font-size:12px}
-.task-add{display:grid;grid-template-columns:1fr 85px 85px 85px auto;gap:6px;margin-bottom:10px}
-.task-add input,.task-add select{padding:8px;border:1px solid #d9d0c2;border-radius:7px;background:#fff;font-size:12px}
-button{border:0;border-radius:7px;padding:8px 12px;cursor:pointer;font-size:12px;font-weight:bold}
-.add{background:#756653;color:#fff}.small{background:#e5dccd;color:#51493f}
-.filter{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:6px;margin-bottom:8px}
-.task-list{flex:1;overflow:auto;border:1px solid #e0d8cb;border-radius:10px;background:rgba(255,255,255,.55);padding:6px}
-.task{display:grid;grid-template-columns:22px 1fr auto;gap:7px;align-items:center;padding:8px;border-bottom:1px solid #eee7dc}
-.task:last-child{border-bottom:0}.task.done .task-name{text-decoration:line-through;color:#aaa}
-.task-name{font-size:13px;font-weight:bold}.meta{font-size:10px;color:#8d8274;margin-top:3px}
-.badge{display:inline-block;padding:2px 5px;border-radius:5px;background:#eee7dc;margin-right:3px}
+.task-box{margin-top:8px;border:1px solid #ddd4c6;border-radius:9px;background:#fffaf1;padding:8px;min-height:0;display:flex;flex-direction:column;flex:1}
+.task-title,.exec-title{font-size:11px;font-weight:bold;margin-bottom:6px;display:flex;justify-content:space-between}
+.task-input{display:grid;grid-template-columns:1.5fr 1fr 65px 65px;gap:4px}
+.task-input input,.task-input select,.filter input,.filter select,.exec-name input{width:100%;padding:6px;border:1px solid #d8cfc1;border-radius:5px;background:#fff;font-size:10px}
+.task-input .tag{grid-column:1/3}
+.add{background:#756653;color:#fff}
+.filter{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:4px;margin:6px 0}
+.task-list{flex:1;overflow:auto;border:1px solid #e1d9cd;border-radius:6px;background:#fffdf9;padding:3px;min-height:55px}
+.task{display:grid;grid-template-columns:18px 1fr auto;gap:4px;align-items:center;padding:5px;border-bottom:1px solid #eee7dc}
+.task:last-child{border:0}.task.done .task-name{text-decoration:line-through;color:#aaa}
+.task-name{font-size:10px;font-weight:bold}.meta{font-size:8px;color:#8d8274;margin-top:2px}.badge{display:inline-block;padding:1px 4px;border-radius:3px;margin-right:2px}
 .high{background:#ead2c8}.mid{background:#e9dfc9}.low{background:#dce5d8}
-.del{padding:4px 7px;background:#eee7dc;color:#806f5d}
-.empty{text-align:center;padding:30px 5px;color:#aaa;font-size:12px}
-.footer{height:65px;border-top:1px solid #ded6c9;background:#faf6ed;display:flex;justify-content:space-between;align-items:center;padding:0 30px}
-.status{font-size:12px;color:#8d8274}.buttons{display:flex;gap:8px}
-.save{background:#756653;color:white}.new{background:#e5dccd;color:#51493f}.delete{background:#eee7dc;color:#806f5d}
-button:hover{opacity:.85}
-@media(max-width:1000px){.diary{aspect-ratio:auto;min-height:900px}.header{height:auto}.content{grid-template-columns:1fr}.section{min-height:260px;border-right:0;border-bottom:1px solid #e0d8cb}}
+.del{padding:3px 5px;background:#eee7dc;color:#806f5d}.empty{text-align:center;color:#aaa;padding:15px;font-size:10px}
+.sort{display:flex;gap:4px;align-items:center;font-size:9px;color:#8d8274}.sort select{padding:4px;border:1px solid #d8cfc1;border-radius:4px;font-size:9px}
+
+/* 실행 기록 */
+.exec{margin-top:8px;border:1px solid #ddd4c6;border-radius:9px;background:#fffaf1;padding:8px}
+.exec-name{display:flex;gap:4px;margin-bottom:5px}
+.exec-btns{display:flex;gap:4px;margin-bottom:5px}
+.start{background:#756653;color:white}.end{background:#a99982;color:white}
+.exec-info{font-size:8px;color:#817568;line-height:1.45;background:#f4eee4;border-radius:5px;padding:5px}
+.exec-info b{color:#554b40}.blocked{width:100%;height:38px;margin-top:5px;padding:5px;font-size:9px;border:1px solid #d8cfc1;border-radius:5px;resize:none}
+.exec-list{max-height:78px;overflow:auto;margin-top:4px}.exec-item{font-size:8px;padding:4px;border-top:1px solid #e4dccf;line-height:1.4}
+.exec-item button{float:right;padding:2px 4px;background:#eee7dc}.running{font-size:9px;color:#756653}
+
+.footer{height:58px;border-top:1px solid #ded6c9;background:#faf6ed;display:flex;justify-content:space-between;align-items:center;padding:0 28px}
+.status{font-size:10px;color:#8d8274}.buttons{display:flex;gap:6px}.save{background:#756653;color:white}.load{background:#a99982;color:white}.new{background:#e5dccd;color:#51493f}.delete{background:#eee7dc;color:#806f5d}
+
+@media(max-width:1000px){
+.diary{aspect-ratio:auto;min-height:900px}.content{grid-template-columns:1fr}.section{min-height:300px;border-right:0;border-bottom:1px solid #e0d8cb}.footer{height:auto;padding:12px;gap:8px;flex-wrap:wrap}
+}
 </style>
 </head>
 
@@ -50,63 +63,86 @@ button:hover{opacity:.85}
 <div class="app"><main class="diary">
 
 <header class="header">
-<div class="title-area">
-<h1>플랜두씨 다이어리</h1>
-<p>Plan → Do → See · 계획하고, 실행하고, 돌아보기</p>
-</div>
+<div class="title-area"><h1>플랜두씨 다이어리</h1><p>Plan → Do → See · 계획하고, 실행하고, 돌아보기</p></div>
 <div class="date-area"><label>날짜</label><input type="date" id="date"></div>
 </header>
 
 <section class="content">
 
+<!-- PLAN -->
 <article class="section plan">
 <div class="section-head"><div class="number">01</div><div><h2>PLAN</h2><p class="section-sub">오늘 무엇을 할 것인가?</p></div></div>
-<textarea id="plan" placeholder="오늘 세운 계획을 적어보세요.
+<textarea id="plan" class="maintext" placeholder="오늘 세운 계획을 적어보세요.
 
 예)
 • HTML 과제 2시간
-• 미세먼지 사이트 기능 수정
-• 네트워크 공부 1시간"></textarea>
+• 미세먼지 사이트 수정
+• 네트워크 공부"></textarea>
 <div class="tip">계획은 구체적으로 적어보세요.</div>
 </article>
 
+<!-- DO + 실행기록 -->
 <article class="section do">
 <div class="section-head"><div class="number">02</div><div><h2>DO</h2><p class="section-sub">실제로 무엇을 했는가?</p></div></div>
-<textarea id="do" placeholder="실제로 한 일을 적어보세요.
+
+<textarea id="do" class="maintext" placeholder="실제로 한 일을 적어보세요.
 
 예)
 • HTML 과제를 완료했다.
-• 기능 오류를 찾아 수정했다.
-• 예상보다 30분 더 공부했다."></textarea>
+• 오류를 해결했다.
+• 네트워크를 공부했다."></textarea>
+
 <div class="tip">계획과 실제로 한 일을 비교해보세요.</div>
+
+<div class="exec">
+<div class="exec-title"><span>⏱ 실행 기록</span><span id="running" class="running">대기 중</span></div>
+<div class="exec-name"><input id="execName" placeholder="실행한 할 일 이름"></div>
+<div class="exec-btns">
+<button class="start" onclick="startExecution()">▶ 시작</button>
+<button class="end" onclick="endExecution()">■ 종료</button>
+</div>
+<div class="exec-info">
+시작: <b id="startTime">-</b> · 종료: <b id="endTime">-</b><br>
+실제 소요: <b id="elapsed">-</b>
+</div>
+<textarea id="blocked" class="blocked" placeholder="막혔던 이유가 있다면 입력하세요."></textarea>
+<div id="execList" class="exec-list"></div>
+</div>
 </article>
 
+<!-- SEE + 할 일 -->
 <article class="section see">
-<div class="section-head"><div class="number">03</div><div><h2>할 일</h2><p class="section-sub">검색 · 필터 · 정렬 · 관리</p></div></div>
+<div class="section-head"><div class="number">03</div><div><h2>SEE</h2><p class="section-sub">돌아보고 할 일을 관리하세요.</p></div></div>
 
-<div class="task-add">
-<input id="taskName" placeholder="할 일을 입력하세요">
+<textarea id="see" class="maintext" placeholder="오늘을 돌아보며 적어보세요.
+
+예)
+• 계획보다 시간이 오래 걸렸다.
+• 새로운 것을 배웠다.
+• 다음에는 먼저 기능을 정리하겠다."></textarea>
+
+<div class="task-box">
+<div class="task-title"><span>✓ 할 일 관리</span><span id="taskCount"></span></div>
+
+<div class="task-input">
+<input id="taskName" placeholder="할 일">
 <input id="deadline" type="date" title="마감일">
 <select id="priority"><option value="낮음">낮음</option><option value="보통" selected>보통</option><option value="높음">높음</option></select>
 <input id="estimate" type="number" min="0" placeholder="분">
-<input id="tag" placeholder="태그">
-</div>
-
-<div style="display:flex;gap:6px;margin-bottom:8px">
-<button class="add" onclick="addTask()">+ 할 일 추가</button>
-<button class="small" onclick="clearTaskInputs()">입력 초기화</button>
+<input id="tag" class="tag" placeholder="태그">
+<button class="add" onclick="addTask()">+ 추가</button>
 </div>
 
 <div class="filter">
-<input id="search" placeholder="🔍 할 일 검색" oninput="renderTasks()">
-<select id="filterPriority" onchange="renderTasks()"><option value="">모든 우선순위</option><option>높음</option><option>보통</option><option>낮음</option></select>
-<select id="filterStatus" onchange="renderTasks()"><option value="">모든 상태</option><option value="todo">미완료</option><option value="done">완료</option></select>
-<input id="filterTag" placeholder="태그 필터" oninput="renderTasks()">
+<input id="search" placeholder="🔍 검색" oninput="renderTasks()">
+<select id="filterPriority" onchange="renderTasks()"><option value="">우선순위 전체</option><option>높음</option><option>보통</option><option>낮음</option></select>
+<select id="filterStatus" onchange="renderTasks()"><option value="">상태 전체</option><option value="todo">미완료</option><option value="done">완료</option></select>
+<input id="filterTag" placeholder="태그" oninput="renderTasks()">
 </div>
 
-<div style="display:flex;gap:5px;margin-bottom:7px;align-items:center">
-<span style="font-size:11px;color:#8d8274">정렬</span>
-<select id="sortBy" class="small" onchange="renderTasks()" style="padding:6px;border:1px solid #d9d0c2;border-radius:6px">
+<div class="sort">
+정렬:
+<select id="sortBy" onchange="renderTasks()">
 <option value="added">추가순</option>
 <option value="deadline">마감일순</option>
 <option value="priority">우선순위순</option>
@@ -115,6 +151,7 @@ button:hover{opacity:.85}
 </div>
 
 <div id="taskList" class="task-list"></div>
+</div>
 </article>
 
 </section>
@@ -123,6 +160,7 @@ button:hover{opacity:.85}
 <div class="status" id="status">아직 저장하지 않았습니다.</div>
 <div class="buttons">
 <button class="new" onclick="newDiary()">새 일기</button>
+<button class="load" onclick="loadDiary()">불러오기</button>
 <button class="delete" onclick="deleteDiary()">삭제</button>
 <button class="save" onclick="saveDiary()">저장하기</button>
 </div>
@@ -134,33 +172,31 @@ button:hover{opacity:.85}
 const SUPABASE_URL="https://fvhlwblhxbhmhxyjlkel.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_3LtJdScwxvoXc282jBtkeA_WEelZkIs";
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
-
 const $=id=>document.getElementById(id);
-const dateInput=$("date"),planInput=$("plan"),doInput=$("do"),statusText=$("status");
-let tasks=[];
+let tasks=[],executions=[],currentExecution=null;
 
-function getToday(){
+function today(){
  const d=new Date();
  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 }
+function esc(s){
+ return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+}
 
+/* ================= 할 일 T06-C14~C20 ================= */
 function addTask(){
  const name=$("taskName").value.trim();
- if(!name){alert("할 일을 입력해주세요.");return}
+ if(!name)return alert("할 일을 입력해주세요.");
  tasks.push({
-  id:Date.now(),
-  name,
+  id:Date.now(),name,
   deadline:$("deadline").value,
   priority:$("priority").value,
   tag:$("tag").value.trim(),
   estimate:Number($("estimate").value)||0,
   done:false
  });
- clearTaskInputs();renderTasks();
-}
-
-function clearTaskInputs(){
  $("taskName").value="";$("deadline").value="";$("priority").value="보통";$("estimate").value="";$("tag").value="";
+ renderTasks();
 }
 
 function toggleTask(id){
@@ -175,152 +211,164 @@ function removeTask(id){
 }
 
 function renderTasks(){
- const q=$("search").value.toLowerCase().trim();
- const fp=$("filterPriority").value,fs=$("filterStatus").value;
- const ft=$("filterTag").value.toLowerCase().trim();
+ const q=$("search").value.toLowerCase().trim(),fp=$("filterPriority").value,fs=$("filterStatus").value,ft=$("filterTag").value.toLowerCase().trim();
  let list=tasks.filter(t=>
-  (!q||t.name.toLowerCase().includes(q))&&
-  (!fp||t.priority===fp)&&
-  (!fs||(fs==="done"?t.done:!t.done))&&
-  (!ft||t.tag.toLowerCase().includes(ft))
+ (!q||t.name.toLowerCase().includes(q))&&
+ (!fp||t.priority===fp)&&
+ (!fs||(fs==="done"?t.done:!t.done))&&
+ (!ft||(t.tag||"").toLowerCase().includes(ft))
  );
-
- const sort=$("sortBy").value;
- const p={높음:0,보통:1,낮음:2};
+ const p={높음:0,보통:1,낮음:2},s=$("sortBy").value;
  list.sort((a,b)=>{
-  if(sort==="deadline")return (a.deadline||"9999").localeCompare(b.deadline||"9999");
-  if(sort==="priority")return p[a.priority]-p[b.priority];
-  if(sort==="estimate")return a.estimate-b.estimate;
+  if(s==="deadline")return(a.deadline||"9999").localeCompare(b.deadline||"9999");
+  if(s==="priority")return p[a.priority]-p[b.priority];
+  if(s==="estimate")return a.estimate-b.estimate;
   return a.id-b.id;
  });
-
- if(!list.length){
-  $("taskList").innerHTML='<div class="empty">조건에 맞는 할 일이 없습니다.</div>';return;
- }
-
+ $("taskCount").textContent=tasks.length+"개";
+ if(!list.length){$("taskList").innerHTML='<div class="empty">조건에 맞는 할 일이 없습니다.</div>';return}
  $("taskList").innerHTML=list.map(t=>{
   const pc=t.priority==="높음"?"high":t.priority==="낮음"?"low":"mid";
   return `<div class="task ${t.done?"done":""}">
   <input type="checkbox" ${t.done?"checked":""} onchange="toggleTask(${t.id})">
-  <div><div class="task-name">${escapeHtml(t.name)}</div>
-  <div class="meta">
-  <span class="badge ${pc}">${t.priority}</span>
-  ${t.deadline?"📅 "+t.deadline:""} 
-  ${t.estimate?" · ⏱ "+t.estimate+"분":""}
-  ${t.tag?" · #"+escapeHtml(t.tag):""}
-  </div></div>
-  <button class="del" onclick="removeTask(${t.id})">삭제</button>
-  </div>`;
+  <div><div class="task-name">${esc(t.name)}</div>
+  <div class="meta"><span class="badge ${pc}">${t.priority}</span>${t.deadline?"📅 "+t.deadline:""}${t.estimate?" · ⏱ "+t.estimate+"분":""}${t.tag?" · #"+esc(t.tag):""}</div></div>
+  <button class="del" onclick="removeTask(${t.id})">삭제</button></div>`
  }).join("");
 }
 
-function escapeHtml(s){
- return s.replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+/* ================= 실행 기록 T06-C23~C26 ================= */
+function startExecution(){
+ if(currentExecution)return alert("이미 실행 중인 기록이 있습니다.");
+ const name=$("execName").value.trim();
+ if(!name)return alert("실행한 할 일 이름을 입력해주세요.");
+ const now=new Date();
+ currentExecution={id:Date.now(),name,start:now.toISOString(),end:null,elapsed:0,blocked:""};
+ $("startTime").textContent=timeText(currentExecution.start);
+ $("endTime").textContent="-";$("elapsed").textContent="실행 중";
+ $("running").textContent="● 실행 중";$("status").textContent="실행을 시작했습니다.";
 }
 
-/* T06-C14~C20 + 기존 PLAN/DO/SEE 저장 */
-async function saveDiary(){
- const date=dateInput.value;
- if(!date){alert("날짜를 먼저 선택해주세요.");return}
+function endExecution(){
+ if(!currentExecution)return alert("먼저 '시작' 버튼을 눌러주세요.");
+ const now=new Date();
+ currentExecution.end=now.toISOString();
+ currentExecution.elapsed=Math.round((now-new Date(currentExecution.start))/1000);
+ currentExecution.blocked=$("blocked").value.trim();
+ executions.push({...currentExecution});
+ $("endTime").textContent=timeText(currentExecution.end);
+ $("elapsed").textContent=formatTime(currentExecution.elapsed);
+ $("running").textContent="완료";
+ $("execName").value="";$("blocked").value="";currentExecution=null;
+ renderExecutions();
+ $("status").textContent="실행 기록이 추가되었습니다. 저장하기를 눌러주세요.";
+}
 
- const data={
-  diary_date:date,
-  plan:planInput.value,
-  do_text:doInput.value,
-  see_text:$("see")?$("see").value:"",
-  tasks:tasks
- };
-
- statusText.textContent="Supabase에 저장 중...";
-
- try{
-  const {error}=await supabaseClient
-   .from("diary")
-   .upsert(data,{onConflict:"diary_date"});
-
-  if(error){
-   console.error(error);
-   statusText.textContent="저장 실패";
-   alert("저장 실패\n\n"+error.message);
-   return;
-  }
-
-  statusText.textContent="저장 완료 · "+new Date().toLocaleTimeString("ko-KR");
-  alert("다이어리와 할 일이 Supabase에 저장되었습니다.");
- }catch(e){
-  console.error(e);
-  statusText.textContent="저장 오류";
-  alert("저장 중 오류가 발생했습니다.\n\n"+e.message);
+function timeText(v){
+ return v?new Date(v).toLocaleString("ko-KR",{hour12:false}):"-";
+}
+function formatTime(sec){
+ const m=Math.floor(sec/60),s=sec%60;
+ return m+"분 "+s+"초";
+}
+function removeExecution(i){
+ executions.splice(i,1);renderExecutions();
+}
+function renderExecutions(){
+ if(!executions.length){
+  $("execList").innerHTML='<div class="empty">실행 기록 없음</div>';return;
  }
+ $("execList").innerHTML=executions.map((x,i)=>`
+ <div class="exec-item"><button onclick="removeExecution(${i})">삭제</button>
+ <b>${esc(x.name)}</b><br>
+ 시작 ${timeText(x.start)} · 종료 ${timeText(x.end)}<br>
+ 실제 ${formatTime(x.elapsed)} · 막힌 이유: ${esc(x.blocked||"없음")}
+ </div>`).join("");
 }
 
+/* ================= Supabase ================= */
 async function loadDiary(){
- const date=dateInput.value;
+ const date=$("date").value;
  if(!date)return;
-
- const {data,error}=await supabaseClient
-  .from("diary")
-  .select("*")
-  .eq("diary_date",date)
-  .maybeSingle();
+ $("status").textContent="Supabase에서 불러오는 중...";
+ const {data,error}=await supabaseClient.from("diary").select("*").eq("diary_date",date).maybeSingle();
 
  if(error){
-  console.error(error);
+  console.error(error);$("status").textContent="불러오기 실패";
+  return alert("불러오기 실패\n\n"+error.message);
+ }
+
+ if(!data){
+  $("plan").value="";$("do").value="";$("see").value="";
+  tasks=[];executions=[];renderTasks();renderExecutions();
+  $("status").textContent="해당 날짜에 저장된 일기가 없습니다.";
   return;
  }
 
- if(data){
-  planInput.value=data.plan||"";
-  doInput.value=data.do_text||"";
-  if($("see"))$("see").value=data.see_text||"";
-  tasks=Array.isArray(data.tasks)?data.tasks:[];
-  statusText.textContent="저장된 다이어리를 불러왔습니다.";
- }else{
-  planInput.value="";
-  doInput.value="";
-  tasks=[];
-  statusText.textContent="새 날짜입니다.";
+ $("plan").value=data.plan||"";
+ $("do").value=data.do_text||"";
+ $("see").value=data.see_text||"";
+ tasks=Array.isArray(data.tasks)?data.tasks:[];
+ executions=Array.isArray(data.execution_records)?data.execution_records:[];
+ currentExecution=null;
+ renderTasks();renderExecutions();
+ $("status").textContent="저장된 일기를 불러왔습니다.";
+}
+
+async function saveDiary(){
+ const date=$("date").value;
+ if(!date)return alert("날짜를 먼저 선택해주세요.");
+ if(currentExecution)return alert("실행 중인 기록이 있습니다. 먼저 종료해주세요.");
+
+ const data={
+  diary_date:date,
+  plan:$("plan").value,
+  do_text:$("do").value,
+  see_text:$("see").value,
+  tasks:tasks,
+  execution_records:executions
+ };
+
+ $("status").textContent="저장 중...";
+ const {error}=await supabaseClient.from("diary").upsert(data,{onConflict:"diary_date"});
+
+ if(error){
+  console.error(error);$("status").textContent="저장 실패";
+  return alert("저장 실패\n\n"+error.message);
  }
- renderTasks();
+
+ $("status").textContent="저장 완료 · "+new Date().toLocaleTimeString("ko-KR");
+ alert("다이어리, 할 일, 실행 기록이 저장되었습니다.");
 }
 
 function newDiary(){
- dateInput.value=getToday();
- planInput.value="";
- doInput.value="";
- tasks=[];
- clearTaskInputs();
- renderTasks();
- statusText.textContent="새 일기를 작성하고 있습니다.";
- planInput.focus();
+ $("date").value=today();$("plan").value="";$("do").value="";$("see").value="";
+ tasks=[];executions=[];currentExecution=null;
+ $("execName").value="";$("blocked").value="";
+ $("startTime").textContent="-";$("endTime").textContent="-";$("elapsed").textContent="-";$("running").textContent="대기 중";
+ renderTasks();renderExecutions();
+ $("status").textContent="새 일기를 작성하고 있습니다.";
 }
 
 async function deleteDiary(){
- const date=dateInput.value;
- if(!date){alert("삭제할 날짜가 없습니다.");return}
- if(!confirm("현재 날짜의 다이어리와 할 일을 모두 삭제할까요?"))return;
+ const date=$("date").value;
+ if(!date)return alert("삭제할 날짜가 없습니다.");
+ if(!confirm("이 날짜의 일기와 할 일, 실행 기록을 모두 삭제할까요?"))return;
 
- const {error}=await supabaseClient
-  .from("diary")
-  .delete()
-  .eq("diary_date",date);
+ const {error}=await supabaseClient.from("diary").delete().eq("diary_date",date);
+ if(error)return alert("삭제 실패\n\n"+error.message);
 
- if(error){
-  alert("삭제 실패\n\n"+error.message);return;
- }
-
- planInput.value="";
- doInput.value="";
- tasks=[];
- renderTasks();
- statusText.textContent="삭제 완료";
- alert("다이어리가 삭제되었습니다.");
+ $("plan").value="";$("do").value="";$("see").value="";
+ tasks=[];executions=[];currentExecution=null;
+ renderTasks();renderExecutions();
+ $("status").textContent="일기와 관련 기록이 삭제되었습니다.";
 }
 
-dateInput.value=getToday();
-dateInput.addEventListener("change",loadDiary);
+$("date").addEventListener("change",loadDiary);
+$("date").value=today();
 loadDiary();
 renderTasks();
+renderExecutions();
 </script>
 </body>
 </html>
