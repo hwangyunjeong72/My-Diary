@@ -1,740 +1,242 @@
+```html
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>플랜두씨 다이어리</title>
-
-<!-- Supabase JavaScript -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
-*{
-    box-sizing:border-box;
-}
-
-body{
-    margin:0;
-    background:#eee8dc;
-    color:#3d372f;
-    font-family:"Malgun Gothic","Apple SD Gothic Neo",sans-serif;
-}
-
-.app{
-    width:100%;
-    min-height:100vh;
-    padding:25px;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-}
-
-.diary{
-    width:min(1400px,96vw);
-    aspect-ratio:16/9;
-    min-height:650px;
-    background:#fffdf7;
-    border:1px solid #d8cfbf;
-    border-radius:18px;
-    box-shadow:0 15px 40px rgba(60,50,40,.12);
-    overflow:hidden;
-    display:flex;
-    flex-direction:column;
-}
-
-.header{
-    height:110px;
-    padding:22px 35px;
-    border-bottom:1px solid #ded6c9;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    background:#faf6ed;
-}
-
-.title-area h1{
-    margin:0 0 7px;
-    font-size:30px;
-    letter-spacing:-1px;
-}
-
-.title-area p{
-    margin:0;
-    color:#8b8174;
-    font-size:14px;
-}
-
-.date-area{
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
-
-.date-area input{
-    padding:10px 12px;
-    border:1px solid #d4cabb;
-    border-radius:8px;
-    background:white;
-    color:#4a433a;
-    font-size:14px;
-}
-
-.content{
-    flex:1;
-    display:grid;
-    grid-template-columns:1fr 1fr 1fr;
-    min-height:0;
-}
-
-.section{
-    position:relative;
-    padding:25px;
-    border-right:1px solid #e0d8cb;
-    display:flex;
-    flex-direction:column;
-}
-
-.section:last-child{
-    border-right:none;
-}
-
-.section.plan{
-    background:#fffdf8;
-}
-
-.section.do{
-    background:#fbfaf5;
-}
-
-.section.see{
-    background:#f8f5ee;
-}
-
-.section-head{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    margin-bottom:18px;
-}
-
-.number{
-    width:38px;
-    height:38px;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-weight:bold;
-    font-size:15px;
-    background:#e7dcc8;
-}
-
-.section h2{
-    margin:0;
-    font-size:22px;
-}
-
-.section-sub{
-    margin:3px 0 0;
-    font-size:12px;
-    color:#978c7d;
-}
-
-textarea{
-    width:100%;
-    flex:1;
-    min-height:200px;
-    resize:none;
-    border:1px solid #ddd4c6;
-    border-radius:12px;
-    background:rgba(255,255,255,.75);
-    padding:17px;
-    font-size:15px;
-    line-height:1.7;
-    color:#403a33;
-    outline:none;
-}
-
-textarea:focus{
-    border-color:#a99982;
-    box-shadow:0 0 0 3px rgba(169,153,130,.12);
-}
-
-.tip{
-    margin-top:12px;
-    font-size:12px;
-    color:#9b9185;
-}
-
-.arrow{
-    position:absolute;
-    right:-12px;
-    top:50%;
-    transform:translateY(-50%);
-    width:24px;
-    height:24px;
-    border-radius:50%;
-    background:#a99982;
-    color:white;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:13px;
-    z-index:3;
-}
-
-.footer{
-    height:80px;
-    border-top:1px solid #ded6c9;
-    background:#faf6ed;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:0 35px;
-}
-
-.status{
-    font-size:13px;
-    color:#8d8274;
-}
-
-.buttons{
-    display:flex;
-    gap:10px;
-}
-
-button{
-    border:0;
-    border-radius:8px;
-    padding:11px 18px;
-    cursor:pointer;
-    font-size:14px;
-    font-weight:bold;
-}
-
-.save{
-    background:#756653;
-    color:white;
-}
-
-.new{
-    background:#e5dccd;
-    color:#51493f;
-}
-
-.delete{
-    background:#eee7dc;
-    color:#806f5d;
-}
-
-button:hover{
-    opacity:.85;
-}
-
+*{box-sizing:border-box}
+body{margin:0;background:#eee8dc;color:#3d372f;font-family:"Malgun Gothic","Apple SD Gothic Neo",sans-serif}
+.app{width:100%;min-height:100vh;padding:25px;display:flex;justify-content:center;align-items:center}
+.diary{width:min(1400px,96vw);aspect-ratio:16/9;min-height:650px;background:#fffdf7;border:1px solid #d8cfbf;border-radius:18px;box-shadow:0 15px 40px rgba(60,50,40,.12);overflow:hidden;display:flex;flex-direction:column}
+.header{height:110px;padding:22px 35px;border-bottom:1px solid #ded6c9;display:flex;justify-content:space-between;align-items:center;background:#faf6ed}
+.title-area h1{margin:0 0 7px;font-size:30px;letter-spacing:-1px}
+.title-area p{margin:0;color:#8b8174;font-size:14px}
+.date-area{display:flex;align-items:center;gap:10px}
+.date-area input{padding:10px 12px;border:1px solid #d4cabb;border-radius:8px;background:white;color:#4a433a;font-size:14px}
+.content{flex:1;display:grid;grid-template-columns:1fr 1fr 1fr;min-height:0}
+.section{position:relative;padding:25px;border-right:1px solid #e0d8cb;display:flex;flex-direction:column}
+.section:last-child{border-right:none}
+.section.plan{background:#fffdf8}.section.do{background:#fbfaf5}.section.see{background:#f8f5ee}
+.section-head{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.number{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:15px;background:#e7dcc8}
+.section h2{margin:0;font-size:22px}.section-sub{margin:3px 0 0;font-size:12px;color:#978c7d}
+textarea{width:100%;flex:1;min-height:200px;resize:none;border:1px solid #ddd4c6;border-radius:12px;background:rgba(255,255,255,.75);padding:17px;font-size:15px;line-height:1.7;color:#403a33;outline:none}
+textarea:focus{border-color:#a99982;box-shadow:0 0 0 3px rgba(169,153,130,.12)}
+.tip{margin-top:12px;font-size:12px;color:#9b9185}
+.arrow{position:absolute;right:-12px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:50%;background:#a99982;color:white;display:flex;align-items:center;justify-content:center;font-size:13px;z-index:3}
+.footer{height:80px;border-top:1px solid #ded6c9;background:#faf6ed;display:flex;justify-content:space-between;align-items:center;padding:0 35px}
+.status{font-size:13px;color:#8d8274}
+.buttons{display:flex;gap:10px}
+button{border:0;border-radius:8px;padding:11px 18px;cursor:pointer;font-size:14px;font-weight:bold}
+.save{background:#756653;color:white}.new{background:#e5dccd;color:#51493f}.delete{background:#eee7dc;color:#806f5d}
+button:hover{opacity:.85}
 @media(max-width:900px){
-
-    .app{
-        padding:10px;
-        align-items:flex-start;
-    }
-
-    .diary{
-        width:100%;
-        min-height:0;
-        aspect-ratio:auto;
-    }
-
-    .header{
-        height:auto;
-        flex-direction:column;
-        align-items:flex-start;
-        gap:15px;
-    }
-
-    .content{
-        grid-template-columns:1fr;
-    }
-
-    .section{
-        min-height:330px;
-        border-right:none;
-        border-bottom:1px solid #e0d8cb;
-    }
-
-    .arrow{
-        display:none;
-    }
-
-    .footer{
-        height:auto;
-        padding:18px;
-        flex-direction:column;
-        gap:15px;
-        align-items:stretch;
-    }
-
-    .buttons{
-        justify-content:flex-end;
-    }
+.app{padding:10px;align-items:flex-start}.diary{width:100%;min-height:0;aspect-ratio:auto}
+.header{height:auto;flex-direction:column;align-items:flex-start;gap:15px}
+.content{grid-template-columns:1fr}.section{min-height:330px;border-right:none;border-bottom:1px solid #e0d8cb}
+.arrow{display:none}.footer{height:auto;padding:18px;flex-direction:column;gap:15px;align-items:stretch}.buttons{justify-content:flex-end}
 }
-
 </style>
 </head>
 
-
 <body>
-
 <div class="app">
-
 <main class="diary">
 
-    <!-- 제목 / 날짜 -->
-    <header class="header">
+<header class="header">
+<div class="title-area">
+<h1>플랜두씨 다이어리</h1>
+<p>Plan → Do → See · 계획하고, 실행하고, 돌아보기</p>
+</div>
+<div class="date-area">
+<label for="date">날짜</label>
+<input type="date" id="date">
+</div>
+</header>
 
-        <div class="title-area">
-            <h1>플랜두씨 다이어리</h1>
-            <p>Plan → Do → See · 계획하고, 실행하고, 돌아보기</p>
-        </div>
+<section class="content">
 
-        <div class="date-area">
-            <label for="date">날짜</label>
-            <input type="date" id="date">
-        </div>
-
-    </header>
-
-
-    <!-- PLAN / DO / SEE -->
-    <section class="content">
-
-        <!-- PLAN -->
-        <article class="section plan">
-
-            <div class="section-head">
-
-                <div class="number">01</div>
-
-                <div>
-                    <h2>PLAN</h2>
-                    <p class="section-sub">오늘 무엇을 할 것인가?</p>
-                </div>
-
-            </div>
-
-            <textarea
-                id="plan"
-                placeholder="오늘 세운 계획을 적어보세요.
+<article class="section plan">
+<div class="section-head">
+<div class="number">01</div>
+<div><h2>PLAN</h2><p class="section-sub">오늘 무엇을 할 것인가?</p></div>
+</div>
+<textarea id="plan" placeholder="오늘 세운 계획을 적어보세요.
 
 예)
 • HTML 과제 2시간
 • 미세먼지 사이트 기능 수정
 • 네트워크 공부 1시간"></textarea>
+<div class="tip">계획은 구체적으로 적어보세요.</div>
+<div class="arrow">→</div>
+</article>
 
-            <div class="tip">
-                계획은 구체적으로 적어보세요.
-            </div>
-
-            <div class="arrow">→</div>
-
-        </article>
-
-
-        <!-- DO -->
-        <article class="section do">
-
-            <div class="section-head">
-
-                <div class="number">02</div>
-
-                <div>
-                    <h2>DO</h2>
-                    <p class="section-sub">실제로 무엇을 했는가?</p>
-                </div>
-
-            </div>
-
-            <textarea
-                id="do"
-                placeholder="실제로 한 일을 적어보세요.
+<article class="section do">
+<div class="section-head">
+<div class="number">02</div>
+<div><h2>DO</h2><p class="section-sub">실제로 무엇을 했는가?</p></div>
+</div>
+<textarea id="do" placeholder="실제로 한 일을 적어보세요.
 
 예)
 • HTML 과제를 완료했다.
 • 기능 오류를 찾아 수정했다.
 • 예상보다 30분 더 공부했다."></textarea>
+<div class="tip">계획과 실제로 한 일을 비교해보세요.</div>
+<div class="arrow">→</div>
+</article>
 
-            <div class="tip">
-                계획과 실제로 한 일을 비교해보세요.
-            </div>
-
-            <div class="arrow">→</div>
-
-        </article>
-
-
-        <!-- SEE -->
-        <article class="section see">
-
-            <div class="section-head">
-
-                <div class="number">03</div>
-
-                <div>
-                    <h2>SEE</h2>
-                    <p class="section-sub">무엇을 느끼고 배웠는가?</p>
-                </div>
-
-            </div>
-
-            <textarea
-                id="see"
-                placeholder="오늘을 돌아보며 적어보세요.
+<article class="section see">
+<div class="section-head">
+<div class="number">03</div>
+<div><h2>SEE</h2><p class="section-sub">무엇을 느끼고 배웠는가?</p></div>
+</div>
+<textarea id="see" placeholder="오늘을 돌아보며 적어보세요.
 
 예)
 • 계획보다 시간이 오래 걸렸다.
 • 오류를 해결하면서 새로운 것을 배웠다.
 • 다음에는 먼저 기능을 정리해야겠다."></textarea>
+<div class="tip">다음 계획에 도움이 될 내용을 적어보세요.</div>
+</article>
 
-            <div class="tip">
-                다음 계획에 도움이 될 내용을 적어보세요.
-            </div>
+</section>
 
-        </article>
-
-    </section>
-
-
-    <!-- 하단 -->
-    <footer class="footer">
-
-        <div class="status" id="status">
-            아직 저장하지 않았습니다.
-        </div>
-
-        <div class="buttons">
-
-            <button class="new" onclick="newDiary()">
-                새 일기
-            </button>
-
-            <button class="delete" onclick="deleteDiary()">
-                삭제
-            </button>
-
-            <button class="save" onclick="saveDiary()">
-                저장하기
-            </button>
-
-        </div>
-
-    </footer>
+<footer class="footer">
+<div class="status" id="status">아직 저장하지 않았습니다.</div>
+<div class="buttons">
+<button class="new" onclick="newDiary()">새 일기</button>
+<button class="delete" onclick="deleteDiary()">삭제</button>
+<button class="save" onclick="saveDiary()">저장하기</button>
+</div>
+</footer>
 
 </main>
-
 </div>
 
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
+const SUPABASE_URL="https://fvhlwblhxbhmhxyjlkel.supabase.co";
+const SUPABASE_KEY="sb_publishable_3LtJdScwxvoXc282jBtkeA_WEelZkIs";
 
-/* =====================================================
-   1. Supabase 연결
-   ===================================================== */
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
-const SUPABASE_URL =
-    "https://fvhlwblhxbhmhxyjlkel.supabase.co";
-
-
-/*
-   ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-
-   여기에 Supabase의 Publishable Key를 넣으세요.
-
-   예:
-   const SUPABASE_PUBLISHABLE_KEY =
-       "sb_publishable_123456789";
-
-   ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
-*/
-
-const SUPABASE_PUBLISHABLE_KEY =
-    "sb_publishable_3LtJdScwxvoXc282jBtkeA_WEelZkIs";
-
-
-/* Supabase 클라이언트 생성 */
-const supabaseClient =
-    window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_PUBLISHABLE_KEY
-    );
-
-
-/* =====================================================
-   2. HTML 요소 가져오기
-   ===================================================== */
-
-const dateInput =
-    document.getElementById("date");
-
-const planInput =
-    document.getElementById("plan");
-
-const doInput =
-    document.getElementById("do");
-
-const seeInput =
-    document.getElementById("see");
-
-const statusText =
-    document.getElementById("status");
-
-
-/* =====================================================
-   3. 오늘 날짜 자동 입력
-   ===================================================== */
+const dateInput=document.getElementById("date");
+const planInput=document.getElementById("plan");
+const doInput=document.getElementById("do");
+const seeInput=document.getElementById("see");
+const statusText=document.getElementById("status");
 
 function getToday(){
-
-    const today = new Date();
-
-    const year =
-        today.getFullYear();
-
-    const month =
-        String(today.getMonth() + 1)
-        .padStart(2,"0");
-
-    const day =
-        String(today.getDate())
-        .padStart(2,"0");
-
-    return `${year}-${month}-${day}`;
+const d=new Date();
+return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 }
 
-
-/* =====================================================
-   4. 기존 날짜별 데이터 불러오기
-      현재는 localStorage 방식 유지
-   ===================================================== */
-
+/* 기존 브라우저 저장 데이터 불러오기 */
 function loadDiary(){
-
-    const date =
-        dateInput.value;
-
-    if(!date) return;
-
-
-    const saved =
-        localStorage.getItem(
-            "plandosee_" + date
-        );
-
-
-    if(saved){
-
-        const data =
-            JSON.parse(saved);
-
-
-        planInput.value =
-            data.plan || "";
-
-        doInput.value =
-            data.do || "";
-
-        seeInput.value =
-            data.see || "";
-
-
-        statusText.textContent =
-            "저장된 일기를 불러왔습니다.";
-
-    }else{
-
-        planInput.value = "";
-
-        doInput.value = "";
-
-        seeInput.value = "";
-
-
-        statusText.textContent =
-            "새로운 날짜입니다.";
-    }
+const date=dateInput.value;
+if(!date)return;
+const saved=localStorage.getItem("plandosee_"+date);
+if(saved){
+const data=JSON.parse(saved);
+planInput.value=data.plan||"";
+doInput.value=data.do||"";
+seeInput.value=data.see||"";
+statusText.textContent="저장된 일기를 불러왔습니다.";
+}else{
+planInput.value="";
+doInput.value="";
+seeInput.value="";
+statusText.textContent="새로운 날짜입니다.";
+}
 }
 
-
-/* =====================================================
-   5. 일기 저장
-      현재는 localStorage 방식 유지
-   ===================================================== */
-
+/* Supabase 저장 */
 async function saveDiary(){
-
-    const date = dateInput.value;
-
-    if(!date){
-        alert("날짜를 먼저 선택해주세요.");
-        return;
-    }
-
-    const data = {
-        diary_date: date,
-        plan: planInput.value,
-        do_text: doInput.value,
-        see: seeInput.value
-    };
-
-    statusText.textContent = "저장 중...";
-
-    const { error } = await supabase
-        .from("diary")
-        .upsert(data, {
-            onConflict: "diary_date"
-        });
-
-    if(error){
-        console.error("Supabase 저장 오류:", error);
-
-        statusText.textContent = "저장 실패";
-
-        alert(
-            "저장에 실패했습니다.\n\n" +
-            error.message
-        );
-
-        return;
-    }
-
-    statusText.textContent =
-        "저장 완료 · " +
-        new Date().toLocaleTimeString("ko-KR");
-
-    alert("오늘의 다이어리가 Supabase에 저장되었습니다.");
+const date=dateInput.value;
+if(!date){
+alert("날짜를 먼저 선택해주세요.");
+return;
 }
 
+statusText.textContent="Supabase에 저장 중...";
 
-/* =====================================================
-   6. 새 일기
-   ===================================================== */
+try{
+const data={
+date:date,
+plan:planInput.value,
+do:doInput.value,
+see:seeInput.value
+};
+
+console.log("Supabase 저장 데이터:",data);
+
+const {error}=await sb.from("diary").insert(data);
+
+if(error){
+console.error("Supabase 저장 오류:",error);
+statusText.textContent="저장 실패";
+alert("저장 실패\n\n"+error.message);
+return;
+}
+
+localStorage.setItem("plandosee_"+date,JSON.stringify({
+date:date,
+plan:planInput.value,
+do:doInput.value,
+see:seeInput.value,
+savedAt:new Date().toLocaleString("ko-KR")
+}));
+
+statusText.textContent="Supabase 저장 완료 · "+new Date().toLocaleTimeString("ko-KR");
+alert("다이어리가 Supabase에 저장되었습니다.");
+
+}catch(error){
+console.error("저장 오류:",error);
+statusText.textContent="저장 오류";
+alert("저장 중 오류가 발생했습니다.\n\n"+error.message);
+}
+}
 
 function newDiary(){
-
-    planInput.value = "";
-
-    doInput.value = "";
-
-    seeInput.value = "";
-
-    dateInput.value =
-        getToday();
-
-
-    statusText.textContent =
-        "새 일기를 작성하고 있습니다.";
-
-
-    planInput.focus();
+planInput.value="";
+doInput.value="";
+seeInput.value="";
+dateInput.value=getToday();
+statusText.textContent="새 일기를 작성하고 있습니다.";
+planInput.focus();
 }
-
-
-/* =====================================================
-   7. 일기 삭제
-   ===================================================== */
 
 function deleteDiary(){
-
-    const date =
-        dateInput.value;
-
-
-    if(!date){
-
-        alert(
-            "삭제할 날짜가 없습니다."
-        );
-
-        return;
-    }
-
-
-    const saved =
-        localStorage.getItem(
-            "plandosee_" + date
-        );
-
-
-    if(!saved){
-
-        alert(
-            "저장된 일기가 없습니다."
-        );
-
-        return;
-    }
-
-
-    const answer =
-        confirm(
-            "이 날짜의 일기를 삭제할까요?"
-        );
-
-
-    if(!answer) return;
-
-
-    localStorage.removeItem(
-        "plandosee_" + date
-    );
-
-
-    planInput.value = "";
-
-    doInput.value = "";
-
-    seeInput.value = "";
-
-
-    statusText.textContent =
-        "일기가 삭제되었습니다.";
+const date=dateInput.value;
+if(!date){
+alert("삭제할 날짜가 없습니다.");
+return;
 }
 
+const saved=localStorage.getItem("plandosee_"+date);
+if(!saved){
+alert("저장된 일기가 없습니다.");
+return;
+}
 
-/* =====================================================
-   8. 날짜 변경
-   ===================================================== */
+if(!confirm("이 날짜의 일기를 삭제할까요?"))return;
 
-dateInput.addEventListener(
-    "change",
-    loadDiary
-);
+localStorage.removeItem("plandosee_"+date);
+planInput.value="";
+doInput.value="";
+seeInput.value="";
+statusText.textContent="일기가 삭제되었습니다.";
+}
 
-
-/* =====================================================
-   9. 처음 실행
-   ===================================================== */
-
-dateInput.value =
-    getToday();
-
+dateInput.addEventListener("change",loadDiary);
+dateInput.value=getToday();
 loadDiary();
-
-
-/* =====================================================
-   10. Supabase 연결 확인
-   ===================================================== */
-
-console.log(
-    "Supabase 연결 객체:",
-    supabaseClient
-);
-
-console.log(
-    "Supabase URL:",
-    SUPABASE_URL
-);
-
 </script>
-
 </body>
 </html>
+```
