@@ -1,10 +1,13 @@
 <!DOCTYPE html>
-
 <html lang="ko">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>플랜두씨 다이어리</title>
+
+<!-- Supabase JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 *{
@@ -40,7 +43,6 @@ body{
     flex-direction:column;
 }
 
-/* 상단 */
 .header{
     height:110px;
     padding:22px 35px;
@@ -78,7 +80,6 @@ body{
     font-size:14px;
 }
 
-/* 메인 */
 .content{
     flex:1;
     display:grid;
@@ -166,7 +167,6 @@ textarea:focus{
     color:#9b9185;
 }
 
-/* 연결 표시 */
 .arrow{
     position:absolute;
     right:-12px;
@@ -184,7 +184,6 @@ textarea:focus{
     z-index:3;
 }
 
-/* 하단 */
 .footer{
     height:80px;
     border-top:1px solid #ded6c9;
@@ -233,8 +232,8 @@ button:hover{
     opacity:.85;
 }
 
-/* 작은 화면 */
 @media(max-width:900px){
+
     .app{
         padding:10px;
         align-items:flex-start;
@@ -279,15 +278,15 @@ button:hover{
         justify-content:flex-end;
     }
 }
-</style>
 
+</style>
 </head>
+
 
 <body>
 
 <div class="app">
 
-```
 <main class="diary">
 
     <!-- 제목 / 날짜 -->
@@ -313,24 +312,25 @@ button:hover{
         <article class="section plan">
 
             <div class="section-head">
+
                 <div class="number">01</div>
 
                 <div>
                     <h2>PLAN</h2>
                     <p class="section-sub">오늘 무엇을 할 것인가?</p>
                 </div>
+
             </div>
 
-            <textarea id="plan"
+            <textarea
+                id="plan"
                 placeholder="오늘 세운 계획을 적어보세요.
-```
 
 예)
 • HTML 과제 2시간
 • 미세먼지 사이트 기능 수정
 • 네트워크 공부 1시간"></textarea>
 
-```
             <div class="tip">
                 계획은 구체적으로 적어보세요.
             </div>
@@ -344,24 +344,25 @@ button:hover{
         <article class="section do">
 
             <div class="section-head">
+
                 <div class="number">02</div>
 
                 <div>
                     <h2>DO</h2>
                     <p class="section-sub">실제로 무엇을 했는가?</p>
                 </div>
+
             </div>
 
-            <textarea id="do"
+            <textarea
+                id="do"
                 placeholder="실제로 한 일을 적어보세요.
-```
 
 예)
 • HTML 과제를 완료했다.
 • 기능 오류를 찾아 수정했다.
 • 예상보다 30분 더 공부했다."></textarea>
 
-```
             <div class="tip">
                 계획과 실제로 한 일을 비교해보세요.
             </div>
@@ -375,24 +376,25 @@ button:hover{
         <article class="section see">
 
             <div class="section-head">
+
                 <div class="number">03</div>
 
                 <div>
                     <h2>SEE</h2>
                     <p class="section-sub">무엇을 느끼고 배웠는가?</p>
                 </div>
+
             </div>
 
-            <textarea id="see"
+            <textarea
+                id="see"
                 placeholder="오늘을 돌아보며 적어보세요.
-```
 
 예)
 • 계획보다 시간이 오래 걸렸다.
 • 오류를 해결하면서 새로운 것을 배웠다.
 • 다음에는 먼저 기능을 정리해야겠다."></textarea>
 
-```
             <div class="tip">
                 다음 계획에 도움이 될 내용을 적어보세요.
             </div>
@@ -410,6 +412,7 @@ button:hover{
         </div>
 
         <div class="buttons">
+
             <button class="new" onclick="newDiary()">
                 새 일기
             </button>
@@ -421,177 +424,325 @@ button:hover{
             <button class="save" onclick="saveDiary()">
                 저장하기
             </button>
+
         </div>
 
     </footer>
 
 </main>
-```
 
 </div>
 
+
 <script>
 
-const dateInput = document.getElementById("date");
-const planInput = document.getElementById("plan");
-const doInput = document.getElementById("do");
-const seeInput = document.getElementById("see");
-const statusText = document.getElementById("status");
+/* =====================================================
+   1. Supabase 연결
+   ===================================================== */
+
+const SUPABASE_URL =
+    "https://fvhlwblhxbhmhxyjlkel.supabase.co";
 
 
-// 오늘 날짜 자동 입력
+/*
+   ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+
+   여기에 Supabase의 Publishable Key를 넣으세요.
+
+   예:
+   const SUPABASE_PUBLISHABLE_KEY =
+       "sb_publishable_123456789";
+
+   ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+*/
+
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_3LtJdScwxvoXc282jBtkeA_WEelZkIs";
+
+
+/* Supabase 클라이언트 생성 */
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+    );
+
+
+/* =====================================================
+   2. HTML 요소 가져오기
+   ===================================================== */
+
+const dateInput =
+    document.getElementById("date");
+
+const planInput =
+    document.getElementById("plan");
+
+const doInput =
+    document.getElementById("do");
+
+const seeInput =
+    document.getElementById("see");
+
+const statusText =
+    document.getElementById("status");
+
+
+/* =====================================================
+   3. 오늘 날짜 자동 입력
+   ===================================================== */
+
 function getToday(){
 
     const today = new Date();
 
-    const year = today.getFullYear();
+    const year =
+        today.getFullYear();
 
-    const month = String(today.getMonth()+1).padStart(2,"0");
+    const month =
+        String(today.getMonth() + 1)
+        .padStart(2,"0");
 
-    const day = String(today.getDate()).padStart(2,"0");
+    const day =
+        String(today.getDate())
+        .padStart(2,"0");
 
     return `${year}-${month}-${day}`;
 }
 
 
-// 날짜별 저장 데이터 불러오기
+/* =====================================================
+   4. 기존 날짜별 데이터 불러오기
+      현재는 localStorage 방식 유지
+   ===================================================== */
+
 function loadDiary(){
 
-    const date = dateInput.value;
+    const date =
+        dateInput.value;
 
     if(!date) return;
 
-    const saved = localStorage.getItem("plandosee_" + date);
+
+    const saved =
+        localStorage.getItem(
+            "plandosee_" + date
+        );
+
 
     if(saved){
 
-        const data = JSON.parse(saved);
+        const data =
+            JSON.parse(saved);
 
-        planInput.value = data.plan || "";
-        doInput.value = data.do || "";
-        seeInput.value = data.see || "";
 
-        statusText.textContent = "저장된 일기를 불러왔습니다.";
+        planInput.value =
+            data.plan || "";
+
+        doInput.value =
+            data.do || "";
+
+        seeInput.value =
+            data.see || "";
+
+
+        statusText.textContent =
+            "저장된 일기를 불러왔습니다.";
 
     }else{
 
         planInput.value = "";
+
         doInput.value = "";
+
         seeInput.value = "";
 
-        statusText.textContent = "새로운 날짜입니다.";
 
+        statusText.textContent =
+            "새로운 날짜입니다.";
     }
 }
 
 
-// 일기 저장
+/* =====================================================
+   5. 일기 저장
+      현재는 localStorage 방식 유지
+   ===================================================== */
+
 function saveDiary(){
 
-    const date = dateInput.value;
+    const date =
+        dateInput.value;
+
 
     if(!date){
 
-        alert("날짜를 먼저 선택해주세요.");
+        alert(
+            "날짜를 먼저 선택해주세요."
+        );
 
         return;
     }
+
 
     const data = {
 
         date:date,
 
-        plan:planInput.value,
+        plan:
+            planInput.value,
 
-        do:doInput.value,
+        do:
+            doInput.value,
 
-        see:seeInput.value,
+        see:
+            seeInput.value,
 
-        savedAt:new Date().toLocaleString("ko-KR")
-
+        savedAt:
+            new Date()
+            .toLocaleString("ko-KR")
     };
 
+
     localStorage.setItem(
+
         "plandosee_" + date,
+
         JSON.stringify(data)
     );
 
+
     statusText.textContent =
-        "저장 완료 · " + new Date().toLocaleTimeString("ko-KR");
+        "저장 완료 · " +
+        new Date()
+        .toLocaleTimeString("ko-KR");
 
-    alert("오늘의 다이어리가 저장되었습니다.");
 
+    alert(
+        "오늘의 다이어리가 저장되었습니다."
+    );
 }
 
 
-// 새 일기
+/* =====================================================
+   6. 새 일기
+   ===================================================== */
+
 function newDiary(){
 
     planInput.value = "";
+
     doInput.value = "";
+
     seeInput.value = "";
 
-    dateInput.value = getToday();
+    dateInput.value =
+        getToday();
 
-    statusText.textContent = "새 일기를 작성하고 있습니다.";
+
+    statusText.textContent =
+        "새 일기를 작성하고 있습니다.";
+
 
     planInput.focus();
-
 }
 
 
-// 일기 삭제
+/* =====================================================
+   7. 일기 삭제
+   ===================================================== */
+
 function deleteDiary(){
 
-    const date = dateInput.value;
+    const date =
+        dateInput.value;
+
 
     if(!date){
 
-        alert("삭제할 날짜가 없습니다.");
+        alert(
+            "삭제할 날짜가 없습니다."
+        );
 
         return;
     }
 
+
     const saved =
-        localStorage.getItem("plandosee_" + date);
+        localStorage.getItem(
+            "plandosee_" + date
+        );
+
 
     if(!saved){
 
-        alert("저장된 일기가 없습니다.");
+        alert(
+            "저장된 일기가 없습니다."
+        );
 
         return;
     }
 
+
     const answer =
-        confirm("이 날짜의 일기를 삭제할까요?");
+        confirm(
+            "이 날짜의 일기를 삭제할까요?"
+        );
+
 
     if(!answer) return;
+
 
     localStorage.removeItem(
         "plandosee_" + date
     );
 
+
     planInput.value = "";
+
     doInput.value = "";
+
     seeInput.value = "";
+
 
     statusText.textContent =
         "일기가 삭제되었습니다.";
-
 }
 
 
-// 날짜가 변경되면 해당 날짜 데이터 불러오기
+/* =====================================================
+   8. 날짜 변경
+   ===================================================== */
+
 dateInput.addEventListener(
     "change",
     loadDiary
 );
 
 
-// 처음 실행
-dateInput.value = getToday();
+/* =====================================================
+   9. 처음 실행
+   ===================================================== */
+
+dateInput.value =
+    getToday();
 
 loadDiary();
+
+
+/* =====================================================
+   10. Supabase 연결 확인
+   ===================================================== */
+
+console.log(
+    "Supabase 연결 객체:",
+    supabaseClient
+);
+
+console.log(
+    "Supabase URL:",
+    SUPABASE_URL
+);
 
 </script>
 
