@@ -1,10 +1,10 @@
-```html
 <!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>플랜두씨 다이어리</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#eee8dc;color:#3d372f;font-family:"Malgun Gothic","Apple SD Gothic Neo",sans-serif}
@@ -40,7 +40,6 @@ button:hover{opacity:.85}
 }
 </style>
 </head>
-
 <body>
 <div class="app">
 <main class="diary">
@@ -116,14 +115,13 @@ button:hover{opacity:.85}
 </main>
 </div>
 
-<!-- Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
 const SUPABASE_URL="https://fvhlwblhxbhmhxyjlkel.supabase.co";
-const SUPABASE_KEY="sb_publishable_3LtJdScwxvoXc282jBtkeA_WEelZkIs";
+const SUPABASE_PUBLISHABLE_KEY="sb_publishable_3LtJdScwxvoXc282jBtkeA_WEelZkIs";
 
-const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const supabaseClient=window.supabase.createClient(
+SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY
+);
 
 const dateInput=document.getElementById("date");
 const planInput=document.getElementById("plan");
@@ -136,46 +134,29 @@ const d=new Date();
 return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 }
 
-/* 기존 브라우저 저장 데이터 불러오기 */
-function loadDiary(){
-const date=dateInput.value;
-if(!date)return;
-const saved=localStorage.getItem("plandosee_"+date);
-if(saved){
-const data=JSON.parse(saved);
-planInput.value=data.plan||"";
-doInput.value=data.do||"";
-seeInput.value=data.see||"";
-statusText.textContent="저장된 일기를 불러왔습니다.";
-}else{
-planInput.value="";
-doInput.value="";
-seeInput.value="";
-statusText.textContent="새로운 날짜입니다.";
-}
-}
-
-/* Supabase 저장 */
+/* 6단계: Supabase 저장 */
 async function saveDiary(){
 const date=dateInput.value;
+
 if(!date){
 alert("날짜를 먼저 선택해주세요.");
 return;
 }
 
-statusText.textContent="Supabase에 저장 중...";
-
-try{
 const data={
-date:date,
+diary_date:date,
 plan:planInput.value,
-do:doInput.value,
-see:seeInput.value
+do_text:doInput.value,
+see_text:seeInput.value
 };
 
 console.log("Supabase 저장 데이터:",data);
+statusText.textContent="Supabase에 저장 중...";
 
-const {error}=await sb.from("diary").insert(data);
+try{
+const {error}=await supabaseClient
+.from("diary")
+.insert(data);
 
 if(error){
 console.error("Supabase 저장 오류:",error);
@@ -184,59 +165,48 @@ alert("저장 실패\n\n"+error.message);
 return;
 }
 
-localStorage.setItem("plandosee_"+date,JSON.stringify({
-date:date,
-plan:planInput.value,
-do:doInput.value,
-see:seeInput.value,
-savedAt:new Date().toLocaleString("ko-KR")
-}));
-
-statusText.textContent="Supabase 저장 완료 · "+new Date().toLocaleTimeString("ko-KR");
-alert("다이어리가 Supabase에 저장되었습니다.");
+console.log("Supabase 저장 성공!");
+statusText.textContent="저장 완료 · "+new Date().toLocaleTimeString("ko-KR");
+alert("오늘의 다이어리가 Supabase에 저장되었습니다.");
 
 }catch(error){
-console.error("저장 오류:",error);
+console.error("저장 중 오류:",error);
 statusText.textContent="저장 오류";
 alert("저장 중 오류가 발생했습니다.\n\n"+error.message);
 }
 }
 
 function newDiary(){
+dateInput.value=getToday();
 planInput.value="";
 doInput.value="";
 seeInput.value="";
-dateInput.value=getToday();
 statusText.textContent="새 일기를 작성하고 있습니다.";
 planInput.focus();
 }
 
+/* 8단계 전까지는 기존 브라우저 삭제 방식 유지 */
 function deleteDiary(){
 const date=dateInput.value;
+
 if(!date){
 alert("삭제할 날짜가 없습니다.");
 return;
 }
 
-const saved=localStorage.getItem("plandosee_"+date);
-if(!saved){
-alert("저장된 일기가 없습니다.");
-return;
-}
+if(!confirm("현재 작성한 내용을 지울까요?"))return;
 
-if(!confirm("이 날짜의 일기를 삭제할까요?"))return;
-
-localStorage.removeItem("plandosee_"+date);
 planInput.value="";
 doInput.value="";
 seeInput.value="";
-statusText.textContent="일기가 삭제되었습니다.";
+statusText.textContent="작성 내용이 지워졌습니다.";
 }
 
-dateInput.addEventListener("change",loadDiary);
 dateInput.value=getToday();
-loadDiary();
+
+console.log("Supabase 연결 객체:",supabaseClient);
+console.log("Supabase URL:",SUPABASE_URL);
 </script>
+
 </body>
 </html>
-```
