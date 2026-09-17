@@ -569,58 +569,48 @@ function loadDiary(){
       현재는 localStorage 방식 유지
    ===================================================== */
 
-function saveDiary(){
+async function saveDiary(){
 
-    const date =
-        dateInput.value;
-
+    const date = dateInput.value;
 
     if(!date){
+        alert("날짜를 먼저 선택해주세요.");
+        return;
+    }
+
+    const data = {
+        diary_date: date,
+        plan: planInput.value,
+        do_text: doInput.value,
+        see: seeInput.value
+    };
+
+    statusText.textContent = "저장 중...";
+
+    const { error } = await supabase
+        .from("diary")
+        .upsert(data, {
+            onConflict: "diary_date"
+        });
+
+    if(error){
+        console.error("Supabase 저장 오류:", error);
+
+        statusText.textContent = "저장 실패";
 
         alert(
-            "날짜를 먼저 선택해주세요."
+            "저장에 실패했습니다.\n\n" +
+            error.message
         );
 
         return;
     }
 
-
-    const data = {
-
-        date:date,
-
-        plan:
-            planInput.value,
-
-        do:
-            doInput.value,
-
-        see:
-            seeInput.value,
-
-        savedAt:
-            new Date()
-            .toLocaleString("ko-KR")
-    };
-
-
-    localStorage.setItem(
-
-        "plandosee_" + date,
-
-        JSON.stringify(data)
-    );
-
-
     statusText.textContent =
         "저장 완료 · " +
-        new Date()
-        .toLocaleTimeString("ko-KR");
+        new Date().toLocaleTimeString("ko-KR");
 
-
-    alert(
-        "오늘의 다이어리가 저장되었습니다."
-    );
+    alert("오늘의 다이어리가 Supabase에 저장되었습니다.");
 }
 
 
